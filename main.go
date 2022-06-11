@@ -12,11 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const (
-	ContentTypeHTML = "text/html; charset=utf-8"
-	ContentTypeText = "text/plain; charset=utf-8"
-)
-
 type UserAgents []struct {
 	AppName    string `json:"appName"`
 	Connection struct {
@@ -67,11 +62,15 @@ func init() {
 
 func getRandomUserAgent(c *gin.Context) {
 	randIdx := rand.Intn(len(userAgentsList))
-	c.Data(http.StatusOK, ContentTypeText, []byte(userAgentsList[randIdx]))
+	c.String(http.StatusOK, userAgentsList[randIdx])
 }
 
 func getFavicon(c *gin.Context) {
 	c.JSON(204, nil)
+}
+
+func getHealthz(c *gin.Context) {
+	c.String(http.StatusOK, "ok")
 }
 
 func main() {
@@ -79,6 +78,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/favicon.ico", getFavicon)
+	router.GET("/healthz", getHealthz)
 	router.GET("/", getRandomUserAgent)
 	router.Run(":8080")
 }
